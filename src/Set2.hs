@@ -114,3 +114,22 @@ addSalaries2 :: [(String, Integer)] -> String -> String -> Maybe Integer
 addSalaries2 d k1 k2 = yLink (+) (lookupMay k1 d) (lookupMay k2 d)
 
 -- 6. Tailprod
+
+transMaybe :: (a -> b) -> Maybe a -> Maybe b
+transMaybe f = chain (mkMaybe . f)
+
+tailProd :: Num a => [a] -> Maybe a
+tailProd = transMaybe product . tailMay
+
+tailSum :: Num a => [a] -> Maybe a
+tailSum = transMaybe sum . tailMay
+
+tailMax :: Ord a => [a] -> Maybe a
+tailMax = combine . transMaybe maximumMay . tailMay
+
+tailMin :: Ord a => [a] -> Maybe a
+tailMin = combine . transMaybe minimumMay . tailMay
+
+combine :: Maybe (Maybe a) -> Maybe a
+combine Nothing = Nothing
+combine (Just m) = m
