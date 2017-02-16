@@ -11,8 +11,6 @@ import MCPrelude
 fiveRands :: [Integer]
 fiveRands = let f (_, s) = rand s in map fst . take 5 . iterate f . rand . mkSeed $ 1
 
-p1 = product fiveRands
-
 -- 2. Random character generation
 
 randLetter :: Seed -> (Char, Seed)
@@ -34,8 +32,6 @@ randEven = generalA (*2) rand
 randOdd = generalA succ randEven
 randTen = generalA (*10) rand
 
-p3 = let seed = mkSeed 1 in product . map (fst . ($ seed)) $ [randEven, randOdd, randTen]
-
 -- 4. Generalizing random pairs
 
 randPair :: Gen (Char, Integer)
@@ -56,17 +52,11 @@ generalB f ga gb s = (f a' b', ss')
 
 generalPair2 = generalB (\a b -> (a, b))
 
-p4 = allSame . map ($ mkSeed 1) $ [randPair, generalPair randLetter rand, generalPair2 randLetter rand]
-    where allSame [] = True
-          allSame (x:xs) = all (== x) xs
-
 -- 5. Generalizing lists of generators
 
 repRandom :: [Gen a] -> Gen [a]
 repRandom [] = \s -> ([], s)
 repRandom (x:xs) = generalB (:) x . repRandom $ xs
-
-p5 = (== randString3) . fst . repRandom (replicate 3 randLetter) . mkSeed $ 1
 
 -- 6. Threading the random number state
 

@@ -13,7 +13,6 @@ instance Show a => Show (Maybe a) where
     show Nothing = "Nothing"
     show (Just a) = "Just " ++ show a
 
-
 instance Eq a => Eq (Maybe a) where
     (==) Nothing Nothing = True
     (==) (Just x) (Just y) = x == y
@@ -58,17 +57,6 @@ queryGreek d f = case lookupMay f d of
         _ -> Nothing
     _ -> Nothing
 
-p3 = and [queryGreek greekDataA "alpha" == Just 2.0,
-          queryGreek greekDataA "beta" == Nothing,
-          queryGreek greekDataA "gamma" == Just 3.3333333333333335,
-          queryGreek greekDataA "delta" == Nothing,
-          queryGreek greekDataA "zeta" == Nothing,
-          queryGreek greekDataB "rho" == Nothing,
-          queryGreek greekDataB "phi" == Just 0.24528301886792453,
-          queryGreek greekDataB "chi" == Just 9.095238095238095,
-          queryGreek greekDataB "psi" == Nothing,
-          queryGreek greekDataB "omega" == Just 24.0]
-
 -- 4. Generalizing chains of failures
 
 chain :: (a -> Maybe b) -> Maybe a -> Maybe b
@@ -84,20 +72,6 @@ queryGreek2 d s = chain (\m -> chain (divMay (fromIntegral m) . fromIntegral) mh
     where xs = lookupMay s d
           mm = chain maximumMay . chain tailMay $ xs
           mh = chain headMay xs
-
-p4 = and $ zipWith (==) qg1 qg2
-    where qg1 = map (uncurry queryGreek) d
-          qg2 = map (uncurry queryGreek2) d
-          d = [(greekDataA, "alpha"),
-               (greekDataA, "beta"),
-               (greekDataA, "gamma"),
-               (greekDataA, "delta"),
-               (greekDataA, "zeta"),
-               (greekDataB, "rho"),
-               (greekDataB, "phi"),
-               (greekDataB, "chi"),
-               (greekDataB, "psi"),
-               (greekDataB, "omega")]
 
 -- 5. Chaining variations
 
