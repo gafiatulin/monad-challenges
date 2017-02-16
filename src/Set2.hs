@@ -108,7 +108,8 @@ addSalaries :: [(String, Integer)] -> String -> String -> Maybe Integer
 addSalaries l k1 k2 = chain (\v1 -> chain (\v2 -> mkMaybe $ v1 + v2) . lookupMay k2 $ l) . lookupMay k1 $ l
 
 yLink :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c
-yLink f ma = chain (\b -> chain (mkMaybe . (`f` b)) ma)
+--yLink f ma = chain (\b -> chain (mkMaybe . (`f` b)) ma)
+yLink f ma mb = link ma (\a -> link mb (mkMaybe . f a))
 
 addSalaries2 :: [(String, Integer)] -> String -> String -> Maybe Integer
 addSalaries2 d k1 k2 = yLink (+) (lookupMay k1 d) (lookupMay k2 d)
